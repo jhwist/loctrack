@@ -5,6 +5,7 @@ gem 'mongoid', '~>2.3'
 gem 'bson_ext', '~>1.4'
 gem 'thin'
 gem 'sinatra-reloader'
+gem 'sinatra-assetpack', :require => 'sinatra/assetpack'
 
 group :test do
   gem 'rspec'
