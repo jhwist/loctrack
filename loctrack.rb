@@ -1,3 +1,9 @@
+class Locations
+  include Mongoid::Document
+  field :when, type => :DateTime
+  field :where, type => :Array
+end
+
 class Counter
   include Mongoid::Document
 
@@ -36,9 +42,26 @@ class Loctrack < Sinatra::Base
       uri = URI.parse(ENV['MONGOHQ_URL'])
       config.master = conn.db(uri.path.gsub(/^\//, ''))
     else
-      config.master = Mongo::Connection.from_uri("mongodb://localhost:27017").db('test')
+      config.master = Mongo::Connection.from_uri("mongodb://localhost:27017").db('locations')
     end
   end
+
+  get '/api/v1/parked/:id' do
+    "Looking up #{params[:name]}"
+    loc = Locations.get(params[:id])
+    if loc.nil? then
+      status 404
+    else
+      status 200
+      body(loc.to_json)
+    end
+  end
+
+  # curl -i -H "Accept: application/json" -X PUT -d '{"when":"2001-01-01 2:00:00","lat":48,"long":11}' http://localhost:5000/api/v1/parked
+  put '/api/v1/parked' do
+    data = JSON.parse(request.body.gets.as_json)
+  end
+
 
   get '/' do
     @counter = Counter.increment.to_s
