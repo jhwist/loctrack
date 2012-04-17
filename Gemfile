@@ -6,6 +6,7 @@ gem 'bson_ext', '~>1.4'
 gem 'thin'
 gem 'sinatra-reloader'
 gem 'sinatra-assetpack', :require => 'sinatra/assetpack'
+gem 'gon-sinatra'
 
 group :test do
   gem 'rspec'
