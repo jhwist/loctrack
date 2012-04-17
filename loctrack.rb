@@ -1,3 +1,4 @@
+require 'sinatra/assetpack'
 
 class Counter
   include Mongoid::Document
@@ -14,7 +15,18 @@ end
 
 class Loctrack < Sinatra::Base
   configure do
-    
+    set :root, File.dirname(__FILE__)
+    register Sinatra::AssetPack
+    assets {
+      js :app, '/js/app.js', [
+        '/js/vendor/**/*.js',
+        '/js/app/**/*.js'
+      ]
+
+      css :application, '/css/application.css', [
+        '/css/screen.css'
+      ]
+    }
   end
   Mongoid.configure do |config|
     if ENV['MONGOHQ_URL']
