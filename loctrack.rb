@@ -25,7 +25,9 @@ class Loctrack < Sinatra::Base
       config.master = Mongo::Connection.from_uri("mongodb://localhost:27017").db('test')
     end
   end
+
   get '/' do
-    'Hello World, you are visitor nr ' + Counter.increment.to_s
+    @counter = Counter.increment.to_s
+    erb :index
   end
 end
