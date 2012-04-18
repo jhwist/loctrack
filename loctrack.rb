@@ -1,7 +1,7 @@
-class Locations
+class Location
   include Mongoid::Document
-  field :when, type => :DateTime
-  field :where, type => :Array
+  include Mongoid::Timestamps
+  field :where, :type => :Array
 end
 
 class Counter
@@ -48,7 +48,7 @@ class Loctrack < Sinatra::Base
 
   get '/api/v1/parked/:id' do
     "Looking up #{params[:name]}"
-    loc = Locations.get(params[:id])
+    loc = Location.get(params[:id])
     if loc.nil? then
       status 404
     else
@@ -57,9 +57,19 @@ class Loctrack < Sinatra::Base
     end
   end
 
-  # curl -i -H "Accept: application/json" -X PUT -d '{"when":"2001-01-01 2:00:00","lat":48,"long":11}' http://localhost:5000/api/v1/parked
-  put '/api/v1/parked' do
+  # curl -i -H "Accept: application/json" -X POST -d '{"loc":"48.11,11.6"}' http://localhost:5000/api/v1/parked
+  post '/api/v1/parked' do
     data = JSON.parse(request.body.gets.as_json)
+    loc = data["loc"]
+    if loc.nil?
+      status 404
+    else
+      lat,long = loc.split(",").map{|x| x.to_f}
+      parked_at = Location.new(:where => [lat,long])
+      parked_at.save!
+      status 200
+      body("Thanks, got you at #{loc}\n")
+    end
   end
 
 
