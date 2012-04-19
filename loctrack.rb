@@ -1,20 +1,13 @@
+require 'rubygems'
+require 'sinatra'
+require 'sinatra/assetpack'
+require 'gon-sinatra'
+require 'mongoid'
+
 class Location
   include Mongoid::Document
   include Mongoid::Timestamps
   field :where, :type => :Array
-end
-
-class Counter
-  include Mongoid::Document
-
-  field :count, :type => Integer
-
-  def self.increment
-    c = first || new({:count => 0})
-    c.inc(:count, 1)
-    c.save
-    c.count
-  end
 end
 
 class Loctrack < Sinatra::Base
@@ -47,7 +40,6 @@ class Loctrack < Sinatra::Base
   end
 
   get '/api/v1/parked/:id' do
-    "Looking up #{params[:name]}"
     loc = Location.get(params[:id])
     if loc.nil? then
       status 404
@@ -74,7 +66,6 @@ class Loctrack < Sinatra::Base
 
 
   get '/' do
-    @counter = Counter.increment.to_s
     gon.locations = [['15-02-2012 - 07.50',  48.05514872074127,11.663317680358887],
 ['16-02-2012 - 08.31',  48.148478865623474,11.743971705436707],
 ['16-02-2012 - 17.31',  48.148478865623474,11.743971705436707],
